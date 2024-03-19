@@ -1,5 +1,5 @@
 # sourcemod-nt-propdynamic-fix
-Fix dynamic props ignoring disabled collisions.
+SourceMod plugin for Neotokyo. Fix dynamic props ignoring disabled collisions.
 
 # Building
 ## Requirements
