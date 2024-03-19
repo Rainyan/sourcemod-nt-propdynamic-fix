@@ -8,8 +8,9 @@ For a prop_dynamic you wish to disable collisions for, either set its "Collision
 Most likely this plugin will break the `EnableCollision` input for any dynamic props which spawn as non-solid, as they wouldn't have their bone followers initialized in the first place. PRs welcome.
 
 ## Background
-In the Source 2006 engine, any dynamic props using bone followers will incorrectly initialize those bone followers before checking whether the prop should have collisions in the first place (abridged):
+In the Source 2006 engine, any dynamic props using bone followers will incorrectly initialize those bone followers before checking whether the prop should have collisions in the first place:
 ```cpp
+// CDynamicProp::CreateVPhysics, abridged
 if ( pkvBoneFollowers )
 {
     /* spooky scary bone follower things */
