@@ -6,6 +6,7 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+#define PLUGIN_VERSION "1.0.0"
 
 // Always set the dynamic version of the rabbitfrog as non-solid.
 // This fixes vanilla maps like nt_rise without requiring map edits.
