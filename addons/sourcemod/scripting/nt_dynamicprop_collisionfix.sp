@@ -12,7 +12,7 @@
 #define FSOLID_NOT_SOLID 4
 #define SF_DYNAMICPROP_NO_VPHYSICS 128
 #define SF_DYNAMICPROP_DISABLE_COLLISION 256
-
+#define COLLISION_GROUP_DEBRIS 1
 
 public Plugin myinfo = {
 	name = "NT prop_dynamic collision fix",
@@ -39,7 +39,6 @@ public void OnEntityCreated(int entity, const char[] classname)
 			SetFailState("Failed to create dynamic hook");
 		}
 	}
-
 	if (INVALID_HOOK_ID ==
 		dh.HookEntity(Hook_Pre, entity, CDynamicProp__CreateVPhysics))
 	{
@@ -51,6 +50,7 @@ MRESReturn CDynamicProp__CreateVPhysics(int pThis, DHookReturn hReturn)
 {
 	if (IsNotSolid(pThis))
 	{
+		SetEntityCollisionGroup(pThis, COLLISION_GROUP_DEBRIS);
 		hReturn.Value = true;
 		return MRES_Supercede;
 	}
@@ -74,3 +74,24 @@ bool IsNotSolid(int entity)
 	}
 	return false;
 }
+
+// Backported for old SM compat
+#if SOURCEMOD_V_MAJOR <= 1 && SOURCEMOD_V_MINOR <= 10
+void SetEntityCollisionGroup(int entity, int collisiongroup)
+{
+	static Handle call = INVALID_HANDLE;
+	if (call == INVALID_HANDLE)
+	{
+		StartPrepSDKCall(SDKCall_Entity);
+		char sig[] = "\x56\x8B\xF1\x8B\x86\xF4\x01\x00\x00";
+		PrepSDKCall_SetSignature(SDKLibrary_Server, sig, sizeof(sig) - 1);
+		PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Plain);
+		call = EndPrepSDKCall();
+		if (call == INVALID_HANDLE)
+		{
+			SetFailState("Failed to prep SDK call");
+		}
+	}
+	SDKCall(call, entity, collisiongroup);
+}
+#endif
