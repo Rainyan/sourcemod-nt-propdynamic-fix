@@ -6,7 +6,11 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-#define PLUGIN_VERSION "0.1.2"
+
+// Always set the dynamic version of the rabbitfrog as non-solid.
+// This fixes vanilla maps like nt_rise without requiring map edits.
+// Switch to false to disable this behaviour.
+#define FROGHACK true
 
 #define SOLID_NONE 0
 #define FSOLID_NOT_SOLID 4
@@ -54,6 +58,18 @@ MRESReturn CDynamicProp__CreateVPhysics(int pThis, DHookReturn hReturn)
 		hReturn.Value = true;
 		return MRES_Supercede;
 	}
+
+#if FROGHACK // Set all dynamic rabbitfrogs as non-solid, for vanilla compat
+	char mdl[47+1];
+	GetEntPropString(pThis, Prop_Data, "m_ModelName", mdl, sizeof(mdl));
+	if (StrEqual(mdl, "models/nt/props_vehicles/rabbitfrog_dynamic.mdl"))
+	{
+		SetEntityCollisionGroup(pThis, COLLISION_GROUP_DEBRIS);
+		hReturn.Value = true;
+		return MRES_Supercede;
+	}
+#endif
+
 	return MRES_Ignored;
 }
 
